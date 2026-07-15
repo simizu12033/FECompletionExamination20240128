@@ -115,7 +115,7 @@ function autoDiagram(q){
   const core=coreLabel(q);
   const answer=answerLabel(q);
   if(q.field==="基礎理論"||q.field==="会計"){
-    return formula(core,`問${q.n}の条件 → ${answer}`,["条件確認","式・定義","選択肢"]);
+    return formula(core,`${answer}へ至る計算・定義`,["前提","計算","判定"]);
   }
   if(q.field==="データベース"){
     return flow(["DB内の役割",core,answer],["分類","照合"]);
@@ -130,9 +130,9 @@ function autoDiagram(q){
     return cards([["保護対象",core],["目的",answer],["見分け方","暗号・認証・防止を分ける"]]);
   }
   if(q.field==="ストラテジ"||q.field==="マネジメント"){
-    return cards([["場面",shortText(q.title,18)],["中心語",core],["正解軸",answer]]);
+    return cards([["利用場面",shortText(q.title,18)],["着眼点",core],["選ぶ根拠",answer]]);
   }
-  return flow(["問題条件",core,answer],["注目","選択"]);
+  return cards([["確認対象",shortText(q.title,18)],["判断語",core],["正答",answer]]);
 }
 
 function richVisual(q){
