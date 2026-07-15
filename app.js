@@ -15,6 +15,12 @@ const cards=(items)=>`<div class="v-cardset">${items.map((x,i)=>`<section class=
 const layer=(items,focus)=>`<div class="v-layers">${items.map(x=>`<div class="${x===focus?"focus":""}">${esc(x)}</div>`).join("")}</div>`;
 const grid=(items)=>`<div class="v-grid">${items.map(x=>`<div>${esc(x)}</div>`).join("")}</div>`;
 const termFor=q=>typeof TERMS!=="undefined"?TERMS.find(t=>t.q===q.n):null;
+const shortText=(text,max=22)=>{
+  const s=String(text||"").replace(/^[アイウエ]：/,"").replace(/\s+/g,"").trim();
+  return s.length>max?`${s.slice(0,max)}…`:s;
+};
+const answerLabel=q=>shortText(q.answerText||q.title,18);
+const coreLabel=q=>shortText(termFor(q)?.term||q.title,16);
 function detailedFrame(q,visual){
   const term=termFor(q);
   const steps=(q.reasoning||[]).slice(0,3);
@@ -41,11 +47,27 @@ function detailedFrame(q,visual){
 }
 
 function autoDiagram(q){
-  const parts=Array.isArray(q.diagram)&&q.diagram.length?q.diagram:[q.title,q.answerText];
-  if(q.field==="基礎理論"||q.field==="会計")return formula(parts[0],parts.slice(1).join(" → "));
-  if(q.field==="データベース"||q.field==="ネットワーク"||q.field==="開発技術")return flow(parts);
-  if(q.field==="セキュリティ"||q.field==="ストラテジ"||q.field==="マネジメント")return cards(parts.map((x,i)=>[i+1,x]));
-  return flow(parts);
+  const core=coreLabel(q);
+  const answer=answerLabel(q);
+  if(q.field==="基礎理論"||q.field==="会計"){
+    return formula(core,`問${q.n}の条件 → ${answer}`,["条件確認","式・定義","選択肢"]);
+  }
+  if(q.field==="データベース"){
+    return flow(["DB内の役割",core,answer],["分類","照合"]);
+  }
+  if(q.field==="ネットワーク"){
+    return flow(["送信元/宛先",core,answer],["対応付け","判断"]);
+  }
+  if(q.field==="開発技術"){
+    return flow(["図・工程の目的",core,answer],["記法確認","判断"]);
+  }
+  if(q.field==="セキュリティ"){
+    return cards([["保護対象",core],["目的",answer],["見分け方","暗号・認証・防止を分ける"]]);
+  }
+  if(q.field==="ストラテジ"||q.field==="マネジメント"){
+    return cards([["場面",shortText(q.title,18)],["中心語",core],["正解軸",answer]]);
+  }
+  return flow(["問題条件",core,answer],["注目","選択"]);
 }
 
 function richVisual(q){
