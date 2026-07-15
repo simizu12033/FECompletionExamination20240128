@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 const box=(text,cls="")=>`<div class="v-box ${cls}">${esc(text)}</div>`;
-const arrow=(label="")=>`<div class="v-arrow"><i>→</i>${label?`<small>${esc(label)}</small>`:""}</div>`;
+const arrow=(label="")=>`<div class="v-arrow"><i>↓</i>${label?`<small>${esc(label)}</small>`:""}</div>`;
 const flow=(parts,labels=[])=>`<div class="v-flow">${parts.map((x,i)=>`${i?arrow(labels[i-1]||""):""}${box(x,i===parts.length-1?"focus":"")}`).join("")}</div>`;
 const stack=(layers)=>`<div class="v-stack">${layers.map((x,i)=>`<div style="--i:${i}">${esc(x)}</div>`).join("")}</div>`;
 const cycle=(items)=>`<div class="v-cycle">${items.map((x,i)=>`<div><b>${i+1}</b><span>${esc(x)}</span></div>`).join("")}</div>`;
@@ -25,7 +25,7 @@ const answerLabel=q=>shortText(q.answerText||q.title,18);
 const coreLabel=q=>shortText(termFor(q)?.term||q.title,16);
 const qScenes={
   1:()=>compare("大きい値から加算",["小さい値が丸められる","情報落ち"],"小さい値から加算",["小さい値同士を先に集める","誤差を抑える"]),
-  2:()=>formula("戻さず2本引く","1本目で分母が減る → 組合せ確率",["全体","当たり","同時"]),
+  2:()=>formula("戻さず2本引く","1本目で分母が減るため組合せ確率で考える",["全体","当たり","同時"]),
   3:()=>flow(["開始記号","生成規則を適用","終端記号だけの文字列"],["置換","完成"]),
   4:()=>matrix(["列","1の個数","判定"],[["列1","奇数/偶数を確認","垂直パリティ"],["偶数個誤り","変化しない場合あり","検出漏れ"]]),
   5:()=>stack(["先に入れた値","途中の値","最後に入れた値","最初に出る"]),
